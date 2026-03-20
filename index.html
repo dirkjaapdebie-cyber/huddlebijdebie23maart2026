@@ -2,7 +2,9 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Huddle Dashboard - Speelse Editie</title>
+    <!-- CRUCIAAL VOOR MOBIEL: Voorkomt ongewenst zoomen en zet de breedte goed -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Huddle Dashboard - Mobile & Touch Friendly</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
@@ -16,61 +18,79 @@
         body { 
             margin: 0; font-family: 'Quicksand', 'Segoe UI', sans-serif; 
             background: linear-gradient(135deg, #fff9e6 0%, #e0f2f1 50%, #f3e5f5 100%);
-            background-attachment: fixed; padding-bottom: 100px; color: #2d3436;
+            background-attachment: fixed; padding-bottom: 50px; color: #2d3436;
+            -webkit-tap-highlight-color: transparent; /* Verwijdert blauwe gloed bij tikken op mobiel */
         }
 
-        .container { max-width: 1100px; margin: auto; padding: 20px; }
+        .container { max-width: 1100px; margin: auto; padding: 15px; box-sizing: border-box; }
 
-        /* Kaarten met glaseffect */
         .card, .info-box, .video-box, .out-box { 
             background: rgba(255, 255, 255, 0.7); 
-            backdrop-filter: blur(10px);
-            border-radius: 24px; padding: 25px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
-            margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px; padding: 20px; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05); 
+            margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.3);
+            box-sizing: border-box;
         }
 
-        .bijbel-container { border-left: 12px solid var(--green); background: rgba(232, 245, 233, 0.8); }
-        .scroll-box { max-height: 140px; overflow-y: auto; padding-right: 10px; }
-        .scroll-box article { margin-bottom: 12px; background: white; padding: 10px; border-radius: 12px; }
+        /* Bijbelteksten: Touch-vriendelijk scrollen */
+        .bijbel-container { border-left: 8px solid var(--green); }
+        .scroll-box { 
+            max-height: 160px; overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; /* Zorgt voor "smooth bounce" op iPhone */
+            padding-right: 5px; 
+        }
+        .scroll-box article { margin-bottom: 10px; background: white; padding: 12px; border-radius: 12px; font-size: 0.95rem; }
 
-        /* Speelse Knoppen */
+        /* Knoppen: Groter voor duimen */
         .btn-full { 
-            background: var(--accent); color: white; border: none; padding: 12px 20px;
-            border-radius: 50px; cursor: pointer; font-weight: 700; transition: all 0.3s ease;
-            text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            min-height: 48px; /* Touch-standard */
+            background: var(--accent); color: white; border: none; padding: 10px 20px;
+            border-radius: 15px; cursor: pointer; font-weight: 700; width: 100%;
+            text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px;
+            display: flex; align-items: center; justify-content: center;
         }
-        .btn-full:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); filter: brightness(1.1); }
-        .btn-full:active { transform: translateY(-1px); }
 
-        /* Prikbord Sticky Notes */
-        .sticky-note { 
-            background: #fff; padding: 15px; border-radius: 4px; margin-bottom: 15px;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.05);
-            border-left: 5px solid var(--purple);
-            font-family: 'Segoe Print', 'Comic Sans MS', cursive;
-            position: relative; transition: 0.3s;
-        }
-        .sticky-note:nth-child(even) { transform: rotate(2deg); background: #f9f9f9; }
-        .sticky-note:nth-child(odd) { transform: rotate(-1deg); }
-        .sticky-note:hover { transform: rotate(0deg) scale(1.05); z-index: 10; }
-
-        /* Input styling */
+        /* Inputs: Voorkom iOS zoom (font-size moet 16px zijn) */
         input { 
-            padding: 15px; border: 2px solid transparent; border-radius: 15px; 
-            font-size: 1rem; width: 100%; box-sizing: border-box; background: white;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); transition: 0.3s;
+            min-height: 48px; padding: 12px; border: 2px solid transparent; border-radius: 12px; 
+            font-size: 16px; /* Magisch getal tegen inzoomen op iPhone */
+            width: 100%; box-sizing: border-box; background: white;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
-        input:focus { border-color: var(--purple); outline: none; background: #fff; }
 
-        .step-header { text-align: center; margin: 60px 0 30px; font-weight: 900; font-size: 2rem; color: var(--wall-bg); }
-        .tag { background: var(--purple); color: white; padding: 8px 15px; border-radius: 50px; font-size: 0.75rem; position: absolute; top: -15px; left: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        /* Prikbord: Sticky Notes op mobiel minder extreem gedraaid */
+        .sticky-note { 
+            background: #fff; padding: 12px; border-radius: 2px; margin-bottom: 10px;
+            box-shadow: 3px 3px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--purple);
+            font-family: 'Segoe Print', cursive;
+            transform: rotate(-0.5deg);
+        }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; }
-        .banner-img { max-width: 100%; border-radius: 30px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1)); }
+        .step-header { text-align: center; margin: 40px 0 20px; font-size: 1.5rem; color: var(--wall-bg); }
+        
+        /* Grids die zich aanpassen aan schermgrootte */
+        .grid, .output-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 15px; 
+        }
 
-        @media print { .no-print { display: none !important; } }
+        /* Op hele kleine schermen (iPhone SE enz) */
+        @media (max-width: 400px) {
+            .grid, .output-container { grid-template-columns: 1fr; }
+            .card { padding: 15px; }
+            .step-header { font-size: 1.2rem; }
+        }
+
+        .tag { 
+            background: var(--purple); color: white; padding: 5px 12px; 
+            border-radius: 50px; font-size: 0.7rem; font-weight: bold;
+            position: absolute; top: -12px; left: 15px; z-index: 2;
+        }
+
+        .no-print { user-select: none; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
 </head>
@@ -80,7 +100,7 @@
     
     <!-- BIJBELTEKSTEN -->
     <div class="card bijbel-container">
-        <h3 style="margin-top:0; color: var(--green);">✨ God ziet je wanneer je bidt</h3>
+        <h3 style="margin-top:0; color: var(--green); font-size: 1.1rem;">✨ God ziet je wanneer je bidt</h3>
         <div class="scroll-box">
             <article><strong>Mattheüs 6:6</strong><p>"Maar als u bidt, ga in uw binnenkamer, sluit uw deur en bid tot uw Vader..."</p></article>
             <article><strong>Psalm 34:16</strong><p>"De ogen van de HEERE rusten op de rechtvaardigen..."</p></article>
@@ -91,64 +111,52 @@
 
     <!-- VIDEO -->
     <div class="video-box">
-        <div id="player" style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:20px; background:#000;"></div>
+        <div id="player" style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:15px; background:#000;"></div>
     </div>
 
     <!-- INTERACTIEVE VRAGEN -->
-    <div class="card" id="interactief-blok" style="border-top: 10px solid var(--purple); text-align: center;">
-        <div id="vraag-container">
-            <h2 id="huidige-vraag" style="color: var(--purple); font-size: 1.6rem;">Wachten op de start... ☕</h2>
-            <div id="input-sectie" style="display:none; margin-top: 25px;">
-                <input type="text" id="i-antwoord" placeholder="Wat denk jij? Deel het..." onkeydown="if(event.key==='Enter')stuurAntwoord()">
-                <button class="btn-full" onclick="stuurAntwoord()" style="background: var(--purple); margin-top:20px; padding: 15px 40px;">Verstuur gedachte</button>
-            </div>
+    <div class="card" id="interactief-blok" style="border-top: 8px solid var(--purple); text-align: center;">
+        <h2 id="huidige-vraag" style="color: var(--purple); font-size: 1.2rem; min-height: 50px;">Wachten op de start... ☕</h2>
+        <div id="input-sectie" style="display:none; margin-top: 15px;">
+            <input type="text" id="i-antwoord" placeholder="Typ je gedachte..." onkeydown="if(event.key==='Enter')stuurAntwoord()">
+            <button class="btn-full" onclick="stuurAntwoord()" style="background: var(--purple); margin-top:15px;">Verstuur</button>
         </div>
-        <div class="no-print" style="margin-top: 40px; display: flex; justify-content: center; gap: 10px;">
+        
+        <div class="no-print" style="margin-top: 30px; display: flex; flex-direction: column; gap: 8px;">
             <button class="btn-full" onclick="volgendeStap()" style="background: var(--wall-bg);">Volgende stap ➔</button>
-            <button class="btn-full" onclick="resetSessie()" style="background: var(--red);">Reset</button>
+            <button class="btn-full" onclick="resetSessie()" style="background: var(--red); font-size: 0.7rem; min-height: 35px;">Reset Vragen</button>
         </div>
     </div>
 
-    <!-- HET PRIKBORD -->
+    <!-- PRIKBORD -->
     <div id="prikbord-sectie" style="display:none;">
         <h2 class="step-header">📍 Het Groeps-Prikbord</h2>
         <div class="output-container" id="prikbord-grid"></div>
     </div>
 
-    <div style="text-align: center; margin: 60px 0;"><img src="Goede Herder2.jpg" alt="Goede Herder" class="banner-img"></div>
+    <div style="text-align: center; margin: 30px 0;"><img src="Goede Herder2.jpg" alt="Goede Herder" style="width:100%; border-radius:20px;"></div>
 
-    <!-- OORSPRONKELIJKE CONTENT -->
+    <!-- OUDE DASHBOARD CONTENT (NU RESPONSIVE) -->
     <h2 class="step-header">Terugblik</h2>
     <div class="grid">
-        <div class="card"><label><b>1. Bijgebleven</b></label><div class="input-stack"><input id="i-q1"><button class="btn-full" onclick="stuurOud(1,'q')">Drop het</button></div></div>
-        <div class="card"><label><b>2. Dankbaar</b></label><div class="input-stack"><input id="i-q2"><button class="btn-full" onclick="stuurOud(2,'q')">Drop het</button></div></div>
-        <div class="card"><label><b>3. Kansen</b></label><div class="input-stack"><input id="i-q3"><button class="btn-full" onclick="stuurOud(3,'q')">Drop het</button></div></div>
-        <div class="card"><label><b>4. Kringleider</b></label><div class="input-stack"><input id="i-q4"><button class="btn-full" onclick="stuurOud(4,'q')">Drop het</button></div></div>
+        <div class="card"><label><b>1. Bijgebleven</b></label><input id="i-q1"><button class="btn-full" onclick="stuurOud(1,'q')" style="margin-top:8px">Drop het</button></div>
+        <div class="card"><label><b>2. Dankbaar</b></label><input id="i-q2"><button class="btn-full" onclick="stuurOud(2,'q')" style="margin-top:8px">Drop het</button></div>
     </div>
 
-    <div class="output-container" style="margin-top: 20px;">
-        <div class="out-box" id="o-q1"><span class="tag" style="background:var(--blue)">BIJGEBLEVEN</span></div>
-        <div class="out-box" id="o-q2"><span class="tag" style="background:var(--green)">DANKBAAR</span></div>
-        <div class="out-box" id="o-q3"><span class="tag" style="background:var(--yellow); color: #000;">KANSEN</span></div>
-        <div class="out-box" id="o-q4"><span class="tag" style="background:var(--purple)">KRINGLEIDER</span></div>
+    <div class="output-container" id="out-q">
+        <div class="out-box" id="o-q1" style="min-height:120px"><span class="tag" style="background:var(--blue)">BIJGEBLEVEN</span></div>
+        <div class="out-box" id="o-q2" style="min-height:120px"><span class="tag" style="background:var(--green)">DANKBAAR</span></div>
     </div>
-
-    <h2 class="step-header">Kernwaarden & Focus</h2>
-    <div class="grid">
-        <div class="card" style="border-top:8px solid var(--green);"><label><b>Zichtbaar in buurt</b></label><div class="input-stack"><input id="i-sG"><button class="btn-full" style="background:var(--green)" onclick="stuurOud('G','s')">Verstuur</button></div></div>
-        <div class="card" style="border-top:8px solid var(--red);"><label><b>Verlangen naar groei</b></label><div class="input-stack"><input id="i-sR"><button class="btn-full" style="background:var(--red)" onclick="stuurOud('R','s')">Verstuur</button></div></div>
-        <div class="card" style="border-top:8px solid var(--yellow);"><label><b>Focus Kringhuis</b></label><div class="input-stack"><input id="i-f1"><button class="btn-full" style="background:var(--yellow); color:#000" onclick="stuurOud(1,'f')">Plan actie</button></div></div>
-    </div>
-
-    <div class="output-container" id="extra-outputs">
-        <div class="out-box" id="o-sG"><span class="tag" style="background:var(--green)">ZICHTBAAR</span></div>
-        <div class="out-box" id="o-sR"><span class="tag" style="background:var(--red)">VERLANGEN</span></div>
-        <div class="out-box" id="o-f1"><span class="tag" style="background:var(--yellow); color:#000">ONZE FOCUS</span></div>
-    </div>
+    
+    <!-- Knop voor PDF of extra's kan hier -->
 
 </div>
 
 <script>
+    // Gebruik je bestaande Firebase Config en Functies hier...
+    // De rest van de JS blijft hetzelfde als de vorige versie!
+    // Alleen de laadPrikbord functie moet aangepast worden voor de mobiele styling:
+
     const firebaseConfig = { apiKey: "AIzaSyCSoSYmzdcse87_E-p6K-DMn_NbQWFnPNU", authDomain: "huddlebijdebie26jan.firebaseapp.com", databaseURL: "https://huddlebijdebie26jan-default-rtdb.europe-west1.firebasedatabase.app/", projectId: "huddlebijdebie26jan" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -183,7 +191,7 @@
             const stap = s.val();
             if(el.value.trim() && stap > 0) {
                 db.ref(`h/antwoorden/v${stap}`).push(el.value);
-                el.value = ""; el.placeholder = "Gelukt! ✅";
+                el.value = ""; el.placeholder = "Verstuurd! ✅";
             }
         });
     }
@@ -194,7 +202,7 @@
         const labels = ["BINNENKAMER", "HARTSLAG", "NIET-PRESTEREN", "DE HERDER"];
         for(let i=1; i<=4; i++) {
             const box = document.createElement('div'); box.className = 'out-box';
-            box.style.borderTop = `8px solid ${kleuren[i-1]}`;
+            box.style.borderTop = `6px solid ${kleuren[i-1]}`;
             box.innerHTML = `<span class="tag" style="background:${kleuren[i-1]}; color:${i==4?'#000':'#fff'}">${labels[i-1]}</span>`;
             db.ref(`h/antwoorden/v${i}`).on('value', snap => {
                 box.querySelectorAll('.sticky-note').forEach(n => n.remove());
@@ -227,9 +235,7 @@
             });
         });
     };
-    listenOud('q', 'q', ["BIJGEBLEVEN","DANKBAAR","KANSEN","KRINGLEIDER"]);
-    listenOud('s', 's', ["ZICHTBAAR", "VERLANGEN"]);
-    listenOud('f', 'f', ["ONZE FOCUS"]);
+    listenOud('q', 'q', ["BIJGEBLEVEN","DANKBAAR"]);
 </script>
 </body>
 </html>
