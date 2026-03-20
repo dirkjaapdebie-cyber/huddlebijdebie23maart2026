@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Huddle Totaal Dashboard</title>
+    <title>Huddle Totaal Dashboard - Psalm 139</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
@@ -21,7 +21,6 @@
 
         .container { max-width: 1100px; margin: auto; padding: 15px; box-sizing: border-box; }
 
-        /* Media Layouts */
         .media-layout { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 30px; }
         .video-side { flex: 1; min-width: 320px; }
         
@@ -74,8 +73,7 @@
 
 <div class="container">
 
-    <!-- SECTIE 1: SELA OPENING -->
-    <h2 class="step-header" style="color:var(--pink)">🎵 Opening: Ik zal er zijn</h2>
+    <h2 class="step-header" style="color:var(--pink)">🎵 Opening: Heer die mij ziet</h2>
     <div class="media-layout">
         <div class="video-side video-box" style="border-top: 5px solid var(--pink);">
             <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:15px;">
@@ -85,23 +83,41 @@
             </div>
         </div>
         <div class="scroll-box">
-            <h4 style="color:var(--pink);">Lyrics: Sela</h4>
-            <p>Hoe wonderlijk is Uw eeuwige Naam. U bent die U bent...<br><br>
-               <b>Refrein:</b> Ik zal er zijn, Ik ben uw God. Ik ben uw hoop, uw kracht en uw lot. Ik ben uw troost, Ik ben uw rust. Vrees niet voor de nacht, want Ik ben uw licht.<br><br>
-               U gaat voor mij uit, U baant mij de weg. Uw trouw is groot, Uw liefde kent geen grens. U bent de God van elk mens.<br><br>
-               Ooit komt de dag dat ik U zal zien. Dan zal ik weten dat U er was, dat U ook toen al op mij paste.
+            <h4 style="color:var(--pink);">Lyrics: Psalm 139</h4>
+            <p>
+                Heer die mij ziet zoals ik ben<br>
+                Dieper dan ik mijzelf ooit ken<br>
+                Kent U mij, U weet waar ik ga<br>
+                U volgt mij waar ik zit of sta<br><br>
+
+                Wat mij ten diepste houdt bewogen<br>
+                Ligt alles open voor Uw ogen<br>
+                Wat mij ten diepste houdt bewogen<br>
+                Het ligt alles open voor Uw ogen<br><br>
+
+                U bent mij overal nabij<br>
+                Uw ogen waken over mij<br>
+                Van toen ik vormloos ben ontstaan<br>
+                U wist hoe het zal verder gaan<br><br>
+
+                O God, hou mij geheel omgeven<br>
+                En leid mij op de weg van het leven<br>
+                O God, hou mij geheel omgeven<br>
+                En leid mij op de weg van het leven<br><br>
+
+                Ja, leid mij op de weg van het leven.
             </p>
         </div>
     </div>
 
-    <!-- SECTIE 2: WOORD & ONDERWIJS -->
     <h2 class="step-header" style="color:var(--accent)">📖 Woord & Onderwijs</h2>
     <div class="media-layout">
         <div class="scroll-box">
             <h4 style="color:var(--accent);">📖 Mattheüs 6, Psalm 23 & 139</h4>
-            <p><b>Mattheüs 6:</b> "Uw Vader, Die in het verborgene ziet, zal het u vergelden... Kijk naar de vogels... Uw hemelse Vader weet dat u dit nodig hebt. Zoek eerst het Koninkrijk."<br><br>
-               <b>Psalm 23:</b> "De HEERE is mijn Herder, mij ontbreekt niets. Hij verkwikt mijn ziel, Hij leidt mij..."<br><br>
-               <b>Psalm 139:</b> "HEERE, U doorgrondt en kent mij. U begrijpt mijn gedachten. Uw ogen zagen mijn ongevormd begin."
+            <p><b>Mattheüs 6:</b> "Let erop dat u uw liefdegave niet doet voor de ogen van de mensen om door hen gezien te worden... Uw Vader, Die in het verborgene ziet, zal het u in het openbaar vergelden.<br><br>
+               Kijk naar de vogels in de lucht: zij zaaien niet en maaien niet... en toch voedt uw hemelse Vader hen. Uw hemelse Vader weet dat u al deze dingen nodig hebt. Maar zoek eerst het Koninkrijk van God."<br><br>
+               <b>Psalm 23:</b> "De HEERE is mijn Herder, mij ontbreekt niets. Hij verkwikt mijn ziel, Hij leidt mij in het spoor van de gerechtigheid."<br><br>
+               <b>Psalm 139:</b> "HEERE, U doorgrondt en kent mij. U begrijpt mijn gedachten. Uw ogen hebben mijn ongevormd begin gezien."
             </p>
         </div>
         <div class="video-side video-box" style="border-top: 5px solid var(--accent);">
@@ -114,11 +130,10 @@
         </div>
     </div>
 
-    <!-- SECTIE 3: HET NIEUWE DASHBOARD (7 VRAGEN) -->
     <div class="card" style="border-top: 8px solid var(--teal);">
         <h2 id="huidige-vraag" style="text-align: center; color: var(--teal); font-size: 1.1rem; min-height: 60px; display: flex; align-items: center; justify-content: center;">Laden...</h2>
         <div id="input-sectie" style="display:none;">
-            <input type="text" id="i-antwoord" placeholder="Typ je gedachte hier..." onkeydown="if(event.key==='Enter')stuurAntwoord()">
+            <input type="text" id="i-antwoord" placeholder="Deel je gedachte..." onkeydown="if(event.key==='Enter')stuurAntwoord()">
             <button class="btn-full" style="background:var(--teal);" onclick="stuurAntwoord()">Verstuur naar Prikbord</button>
         </div>
         <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 8px;">
@@ -137,18 +152,21 @@
 
     <hr style="margin: 60px 0; border: 1px dashed #ccc;">
 
-    <!-- SECTIE 4: OUDE DATA (VORIGE KEER) -->
     <h2 class="step-header">🕒 Terugblik & Vorige Invoer</h2>
     <div class="grid">
         <div class="card"><label>1. Bijgebleven</label><input id="i-q1"><button class="btn-full btn-sec" onclick="stuurOud(1,'q')">Verstuur</button></div>
         <div class="card"><label>2. Dankbaar</label><input id="i-q2"><button class="btn-full btn-sec" onclick="stuurOud(2,'q')">Verstuur</button></div>
-        <div class="card"><label>Focus Buurt</label><input id="i-sG"><button class="btn-full btn-sec" onclick="stuurOud('G','s')" style="background:var(--green); color:white">Verstuur</button></div>
-        <div class="card"><label>Verlangen</label><input id="i-sR"><button class="btn-full btn-sec" onclick="stuurOud('R','s')" style="background:var(--red); color:white">Verstuur</button></div>
+        <div class="card"><label>3. Kansen</label><input id="i-q3"><button class="btn-full btn-sec" onclick="stuurOud(3,'q')">Verstuur</button></div>
+        <div class="card"><label>4. Kringleider</label><input id="i-q4"><button class="btn-full btn-sec" onclick="stuurOud(4,'q')">Verstuur</button></div>
+        <div class="card"><label>Zichtbaar Buurt</label><input id="i-sG"><button class="btn-full btn-sec" onclick="stuurOud('G','s')" style="background:var(--green); color:white">Verstuur</button></div>
+        <div class="card"><label>Verlangen Groei</label><input id="i-sR"><button class="btn-full btn-sec" onclick="stuurOud('R','s')" style="background:var(--red); color:white">Verstuur</button></div>
     </div>
 
     <div class="output-container">
         <div class="out-box" id="o-q1"><span class="tag" style="background:var(--accent)">BIJGEBLEVEN</span></div>
         <div class="out-box" id="o-q2"><span class="tag" style="background:var(--green)">DANKBAAR</span></div>
+        <div class="out-box" id="o-q3"><span class="tag" style="background:#e17055">KANSEN</span></div>
+        <div class="out-box" id="o-q4"><span class="tag" style="background:var(--purple)">KRINGLEIDER</span></div>
         <div class="out-box" id="o-sG"><span class="tag" style="background:var(--teal)">ZICHTBAAR</span></div>
         <div class="out-box" id="o-sR"><span class="tag" style="background:var(--red)">VERLANGEN</span></div>
     </div>
@@ -174,7 +192,6 @@
         "7. Wat neem je mee de week in?"
     ];
 
-    // Logica voor de 7 vragen
     db.ref('h/stap').on('value', s => {
         const stap = s.val() || 0;
         const vDisplay = document.getElementById('huidige-vraag');
@@ -204,7 +221,7 @@
             const stap = s.val();
             if(el.value.trim() && stap > 0) {
                 db.ref(`h/antwoorden/v${stap}`).push(el.value);
-                el.value = ""; el.placeholder = "Gedeeld! ✅";
+                el.value = "";
             }
         });
     }
@@ -228,7 +245,6 @@
         }
     }
 
-    // Logica voor oude data
     function stuurOud(id, type) {
         const el = document.getElementById('i-' + type + id);
         if(el && el.value.trim()) { db.ref('h/' + type).push({ c: id, t: el.value }); el.value = ""; }
