@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Huddle Dashboard - Speelse Editie</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <style>
+        :root { 
+            --accent: #0984e3; --wall-bg: #2d3436;
+            --green: #00b894; --red: #ff7675; --yellow: #ffeaa7;
+            --blue: #74b9ff; --purple: #a29bfe;
+        }
+        
+        body { 
+            margin: 0; font-family: 'Quicksand', 'Segoe UI', sans-serif; 
+            background: linear-gradient(135deg, #fff9e6 0%, #e0f2f1 50%, #f3e5f5 100%);
+            background-attachment: fixed; padding-bottom: 100px; color: #2d3436;
+        }
+
+        .container { max-width: 1100px; margin: auto; padding: 20px; }
+
+        /* Kaarten met glaseffect */
+        .card, .info-box, .video-box, .out-box { 
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(10px);
+            border-radius: 24px; padding: 25px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .bijbel-container { border-left: 12px solid var(--green); background: rgba(232, 245, 233, 0.8); }
+        .scroll-box { max-height: 140px; overflow-y: auto; padding-right: 10px; }
+        .scroll-box article { margin-bottom: 12px; background: white; padding: 10px; border-radius: 12px; }
+
+        /* Speelse Knoppen */
+        .btn-full { 
+            background: var(--accent); color: white; border: none; padding: 12px 20px;
+            border-radius: 50px; cursor: pointer; font-weight: 700; transition: all 0.3s ease;
+            text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .btn-full:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); filter: brightness(1.1); }
+        .btn-full:active { transform: translateY(-1px); }
+
+        /* Prikbord Sticky Notes */
+        .sticky-note { 
+            background: #fff; padding: 15px; border-radius: 4px; margin-bottom: 15px;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--purple);
+            font-family: 'Segoe Print', 'Comic Sans MS', cursive;
+            position: relative; transition: 0.3s;
+        }
+        .sticky-note:nth-child(even) { transform: rotate(2deg); background: #f9f9f9; }
+        .sticky-note:nth-child(odd) { transform: rotate(-1deg); }
+        .sticky-note:hover { transform: rotate(0deg) scale(1.05); z-index: 10; }
+
+        /* Input styling */
+        input { 
+            padding: 15px; border: 2px solid transparent; border-radius: 15px; 
+            font-size: 1rem; width: 100%; box-sizing: border-box; background: white;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); transition: 0.3s;
+        }
+        input:focus { border-color: var(--purple); outline: none; background: #fff; }
+
+        .step-header { text-align: center; margin: 60px 0 30px; font-weight: 900; font-size: 2rem; color: var(--wall-bg); }
+        .tag { background: var(--purple); color: white; padding: 8px 15px; border-radius: 50px; font-size: 0.75rem; position: absolute; top: -15px; left: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; }
+        .banner-img { max-width: 100%; border-radius: 30px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1)); }
+
+        @media print { .no-print { display: none !important; } }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- BIJBELTEKSTEN -->
+    <div class="card bijbel-container">
+        <h3 style="margin-top:0; color: var(--green);">✨ God ziet je wanneer je bidt</h3>
+        <div class="scroll-box">
+            <article><strong>Mattheüs 6:6</strong><p>"Maar als u bidt, ga in uw binnenkamer, sluit uw deur en bid tot uw Vader..."</p></article>
+            <article><strong>Psalm 34:16</strong><p>"De ogen van de HEERE rusten op de rechtvaardigen..."</p></article>
+            <article><strong>Psalm 139:2</strong><p>"Ú kent mijn zitten en mijn opstaan, Ú begrijpt van verre mijn gedachten."</p></article>
+            <article><strong>1 Petrus 3:12</strong><p>"Want de ogen van de Heere rusten op de rechtvaardigen..."</p></article>
+        </div>
+    </div>
+
+    <!-- VIDEO -->
+    <div class="video-box">
+        <div id="player" style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:20px; background:#000;"></div>
+    </div>
+
+    <!-- INTERACTIEVE VRAGEN -->
+    <div class="card" id="interactief-blok" style="border-top: 10px solid var(--purple); text-align: center;">
+        <div id="vraag-container">
+            <h2 id="huidige-vraag" style="color: var(--purple); font-size: 1.6rem;">Wachten op de start... ☕</h2>
+            <div id="input-sectie" style="display:none; margin-top: 25px;">
+                <input type="text" id="i-antwoord" placeholder="Wat denk jij? Deel het..." onkeydown="if(event.key==='Enter')stuurAntwoord()">
+                <button class="btn-full" onclick="stuurAntwoord()" style="background: var(--purple); margin-top:20px; padding: 15px 40px;">Verstuur gedachte</button>
+            </div>
+        </div>
+        <div class="no-print" style="margin-top: 40px; display: flex; justify-content: center; gap: 10px;">
+            <button class="btn-full" onclick="volgendeStap()" style="background: var(--wall-bg);">Volgende stap ➔</button>
+            <button class="btn-full" onclick="resetSessie()" style="background: var(--red);">Reset</button>
+        </div>
+    </div>
+
+    <!-- HET PRIKBORD -->
+    <div id="prikbord-sectie" style="display:none;">
+        <h2 class="step-header">📍 Het Groeps-Prikbord</h2>
+        <div class="output-container" id="prikbord-grid"></div>
+    </div>
+
+    <div style="text-align: center; margin: 60px 0;"><img src="Goede Herder2.jpg" alt="Goede Herder" class="banner-img"></div>
+
+    <!-- OORSPRONKELIJKE CONTENT -->
+    <h2 class="step-header">Terugblik</h2>
+    <div class="grid">
+        <div class="card"><label><b>1. Bijgebleven</b></label><div class="input-stack"><input id="i-q1"><button class="btn-full" onclick="stuurOud(1,'q')">Drop het</button></div></div>
+        <div class="card"><label><b>2. Dankbaar</b></label><div class="input-stack"><input id="i-q2"><button class="btn-full" onclick="stuurOud(2,'q')">Drop het</button></div></div>
+        <div class="card"><label><b>3. Kansen</b></label><div class="input-stack"><input id="i-q3"><button class="btn-full" onclick="stuurOud(3,'q')">Drop het</button></div></div>
+        <div class="card"><label><b>4. Kringleider</b></label><div class="input-stack"><input id="i-q4"><button class="btn-full" onclick="stuurOud(4,'q')">Drop het</button></div></div>
+    </div>
+
+    <div class="output-container" style="margin-top: 20px;">
+        <div class="out-box" id="o-q1"><span class="tag" style="background:var(--blue)">BIJGEBLEVEN</span></div>
+        <div class="out-box" id="o-q2"><span class="tag" style="background:var(--green)">DANKBAAR</span></div>
+        <div class="out-box" id="o-q3"><span class="tag" style="background:var(--yellow); color: #000;">KANSEN</span></div>
+        <div class="out-box" id="o-q4"><span class="tag" style="background:var(--purple)">KRINGLEIDER</span></div>
+    </div>
+
+    <h2 class="step-header">Kernwaarden & Focus</h2>
+    <div class="grid">
+        <div class="card" style="border-top:8px solid var(--green);"><label><b>Zichtbaar in buurt</b></label><div class="input-stack"><input id="i-sG"><button class="btn-full" style="background:var(--green)" onclick="stuurOud('G','s')">Verstuur</button></div></div>
+        <div class="card" style="border-top:8px solid var(--red);"><label><b>Verlangen naar groei</b></label><div class="input-stack"><input id="i-sR"><button class="btn-full" style="background:var(--red)" onclick="stuurOud('R','s')">Verstuur</button></div></div>
+        <div class="card" style="border-top:8px solid var(--yellow);"><label><b>Focus Kringhuis</b></label><div class="input-stack"><input id="i-f1"><button class="btn-full" style="background:var(--yellow); color:#000" onclick="stuurOud(1,'f')">Plan actie</button></div></div>
+    </div>
+
+    <div class="output-container" id="extra-outputs">
+        <div class="out-box" id="o-sG"><span class="tag" style="background:var(--green)">ZICHTBAAR</span></div>
+        <div class="out-box" id="o-sR"><span class="tag" style="background:var(--red)">VERLANGEN</span></div>
+        <div class="out-box" id="o-f1"><span class="tag" style="background:var(--yellow); color:#000">ONZE FOCUS</span></div>
+    </div>
+
+</div>
+
+<script>
+    const firebaseConfig = { apiKey: "AIzaSyCSoSYmzdcse87_E-p6K-DMn_NbQWFnPNU", authDomain: "huddlebijdebie26jan.firebaseapp.com", databaseURL: "https://huddlebijdebie26jan-default-rtdb.europe-west1.firebasedatabase.app/", projectId: "huddlebijdebie26jan" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const diepeVragen = [
+        "1. Als God je ziet op momenten dat niemand anders kijkt, verandert dat hoe je bidt?",
+        "2. Hoe verandert het jouw rust als je beseft dat God simpelweg kijkt naar wie je bént?",
+        "3. Kun jij geloven dat God met plezier naar je kijkt als je alleen maar stil bij Hem bent?",
+        "4. Wanneer heb jij voor het laatst ervaren dat God heel specifiek jóuw situatie zag?"
+    ];
+
+    document.getElementById('player').innerHTML = `<iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" src="https://www.youtube.com/embed/cq6quKlwQy8?start=1479" allowfullscreen></iframe>`;
+
+    db.ref('h/stap').on('value', s => {
+        const stap = s.val() || 0;
+        const vDisplay = document.getElementById('huidige-vraag');
+        const iSectie = document.getElementById('input-sectie');
+        const prikbord = document.getElementById('prikbord-sectie');
+        const blok = document.getElementById('interactief-blok');
+
+        if (stap === 0) { vDisplay.innerText = "Klaar voor de start? ☕"; iSectie.style.display = 'none'; }
+        else if (stap <= 4) { vDisplay.innerText = diepeVragen[stap-1]; iSectie.style.display = 'block'; prikbord.style.display = 'none'; }
+        else { blok.style.display = 'none'; prikbord.style.display = 'block'; laadPrikbord(); }
+    });
+
+    function volgendeStap() { db.ref('h/stap').transaction(c => (c || 0) + 1); }
+    function resetSessie() { if(confirm("Vragen resetten?")) { db.ref('h/antwoorden').remove(); db.ref('h/stap').set(0); } }
+
+    function stuurAntwoord() {
+        const el = document.getElementById('i-antwoord');
+        db.ref('h/stap').once('value', s => {
+            const stap = s.val();
+            if(el.value.trim() && stap > 0) {
+                db.ref(`h/antwoorden/v${stap}`).push(el.value);
+                el.value = ""; el.placeholder = "Gelukt! ✅";
+            }
+        });
+    }
+
+    function laadPrikbord() {
+        const grid = document.getElementById('prikbord-grid'); grid.innerHTML = "";
+        const kleuren = ['#fab1a0', '#74b9ff', '#55efc4', '#ffeaa7'];
+        const labels = ["BINNENKAMER", "HARTSLAG", "NIET-PRESTEREN", "DE HERDER"];
+        for(let i=1; i<=4; i++) {
+            const box = document.createElement('div'); box.className = 'out-box';
+            box.style.borderTop = `8px solid ${kleuren[i-1]}`;
+            box.innerHTML = `<span class="tag" style="background:${kleuren[i-1]}; color:${i==4?'#000':'#fff'}">${labels[i-1]}</span>`;
+            db.ref(`h/antwoorden/v${i}`).on('value', snap => {
+                box.querySelectorAll('.sticky-note').forEach(n => n.remove());
+                if(snap.exists()) snap.forEach(c => {
+                    const d = document.createElement('div'); d.className = 'sticky-note';
+                    d.innerText = c.val(); box.appendChild(d);
+                });
+            });
+            grid.appendChild(box);
+        }
+    }
+
+    function stuurOud(id, type) {
+        const el = document.getElementById('i-' + type + id);
+        if(el && el.value.trim()) { db.ref('h/' + type).push({ c: id, t: el.value }); el.value = ""; }
+    }
+
+    const listenOud = (p, pref, tags) => {
+        db.ref('h/'+p).on('value', s => {
+            const boxes = document.querySelectorAll(`[id^="o-${pref}"]`);
+            boxes.forEach((b, i) => { 
+                const tagEl = b.querySelector('.tag');
+                b.innerHTML = ""; 
+                if(tagEl) b.appendChild(tagEl);
+            });
+            if(s.exists()) s.forEach(c => {
+                const v = c.val(); const d = document.createElement('div'); d.className = 'entry';
+                d.innerText = v.t; const target = document.getElementById('o-' + pref + v.c);
+                if(target) target.appendChild(d);
+            });
+        });
+    };
+    listenOud('q', 'q', ["BIJGEBLEVEN","DANKBAAR","KANSEN","KRINGLEIDER"]);
+    listenOud('s', 's', ["ZICHTBAAR", "VERLANGEN"]);
+    listenOud('f', 'f', ["ONZE FOCUS"]);
+</script>
+</body>
+</html>
