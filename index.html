@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Huddle Dashboard - Schapen op de Heide</title>
+    <title>Huddle Dashboard - Heide Editie</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
@@ -11,79 +11,53 @@
         :root { 
             --accent: #0984e3; --wall-bg: #2d3436;
             --green: #00b894; --red: #ff7675; --yellow: #ffeaa7;
-            --blue: #74b9ff; --purple: #a29bfe;
+            --blue: #74b9ff; --purple: #a29bfe; --heather: #9b59b6;
         }
         
         body { 
-            margin: 0; font-family: 'Quicksand', 'Segoe UI', sans-serif; 
-            background: linear-gradient(135deg, #fff9e6 0%, #e0f2f1 50%, #f3e5f5 100%);
+            margin: 0; font-family: 'Quicksand', sans-serif; 
+            background: linear-gradient(135deg, #fff9e6 0%, #f3e5f5 100%);
             background-attachment: fixed; padding-bottom: 50px; color: #2d3436;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .container { max-width: 1100px; margin: auto; padding: 15px; box-sizing: border-box; }
 
-        .card, .info-box, .video-box, .out-box { 
+        .card, .video-box, .out-box { 
             background: rgba(255, 255, 255, 0.7); 
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             border-radius: 20px; padding: 20px; 
             box-shadow: 0 8px 25px rgba(0,0,0,0.05); 
             margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.3);
-            box-sizing: border-box;
+            position: relative;
         }
 
-        /* Bijbelteksten: Touch-vriendelijk scrollen */
         .bijbel-container { border-left: 8px solid var(--green); }
-        .scroll-box { 
-            max-height: 160px; overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; 
-            padding-right: 5px; 
-        }
-        .scroll-box article { margin-bottom: 10px; background: white; padding: 12px; border-radius: 12px; font-size: 0.95rem; }
+        .scroll-box { max-height: 160px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .scroll-box article { margin-bottom: 10px; background: white; padding: 12px; border-radius: 12px; }
 
-        /* Knoppen: Groter voor duimen */
         .btn-full { 
-            min-height: 48px;
-            background: var(--accent); color: white; border: none; padding: 10px 20px;
+            min-height: 48px; background: var(--accent); color: white; border: none; padding: 10px 20px;
             border-radius: 15px; cursor: pointer; font-weight: 700; width: 100%;
-            text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s ease;
+            text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;
+            display: flex; align-items: center; justify-content: center; transition: 0.2s;
         }
-        .btn-full:active { transform: scale(0.98); filter: brightness(0.9); }
+        .btn-full:active { transform: scale(0.98); }
+        
+        .btn-sec { background: #dfe6e9; color: #2d3436; font-size: 0.7rem; min-height: 35px; margin-top: 5px; }
 
-        /* Inputs: Voorkom iOS zoom */
         input { 
             min-height: 48px; padding: 12px; border: 2px solid transparent; border-radius: 12px; 
-            font-size: 16px; 
-            width: 100%; box-sizing: border-box; background: white;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 16px; width: 100%; box-sizing: border-box; background: white;
         }
 
-        /* Prikbord: Sticky Notes op mobiel minder extreem gedraaid */
         .sticky-note { 
             background: #fff; padding: 12px; border-radius: 2px; margin-bottom: 10px;
-            box-shadow: 3px 3px 10px rgba(0,0,0,0.05);
-            border-left: 4px solid var(--purple);
-            font-family: 'Segoe Print', cursive;
-            transform: rotate(-0.5deg);
+            box-shadow: 3px 3px 10px rgba(0,0,0,0.05); border-left: 4px solid var(--purple);
+            font-family: 'Segoe Print', cursive; transform: rotate(-0.5deg);
         }
 
-        .step-header { text-align: center; margin: 40px 0 20px; font-size: 1.5rem; color: var(--wall-bg); }
-        
-        /* Grids die zich aanpassen */
-        .grid, .output-container { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-            gap: 15px; 
-        }
-
-        /* Op hele kleine schermen */
-        @media (max-width: 400px) {
-            .grid, .output-container { grid-template-columns: 1fr; }
-            .card { padding: 15px; }
-            .step-header { font-size: 1.2rem; }
-        }
+        .step-header { text-align: center; margin: 40px 0 20px; font-size: 1.5rem; }
+        .grid, .output-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
 
         .tag { 
             background: var(--purple); color: white; padding: 5px 12px; 
@@ -91,7 +65,7 @@
             position: absolute; top: -12px; left: 15px; z-index: 2;
         }
 
-        .no-print { user-select: none; }
+        .nav-controls { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
 </head>
@@ -99,57 +73,59 @@
 
 <div class="container">
     
+    <!-- BIJBELTEKSTEN -->
     <div class="card bijbel-container">
         <h3 style="margin-top:0; color: var(--green); font-size: 1.1rem;">✨ God ziet je wanneer je bidt</h3>
         <div class="scroll-box">
             <article><strong>Mattheüs 6:6</strong><p>"Maar als u bidt, ga in uw binnenkamer, sluit uw deur en bid tot uw Vader..."</p></article>
             <article><strong>Psalm 34:16</strong><p>"De ogen van de HEERE rusten op de rechtvaardigen..."</p></article>
             <article><strong>Psalm 139:2</strong><p>"Ú kent mijn zitten en mijn opstaan, Ú begrijpt van verre mijn gedachten."</p></article>
-            <article><strong>1 Petrus 3:12</strong><p>"Want de ogen van de Heere rusten op de rechtvaardigen..."</p></article>
         </div>
     </div>
 
+    <!-- VIDEO -->
     <div class="video-box">
         <div id="player" style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:15px; background:#000;"></div>
     </div>
 
+    <!-- INTERACTIEF BLOK (VRAGEN) -->
     <div class="card" id="interactief-blok" style="border-top: 8px solid var(--purple); text-align: center;">
         <h2 id="huidige-vraag" style="color: var(--purple); font-size: 1.2rem; min-height: 50px;">Wachten op de start... ☕</h2>
+        
         <div id="input-sectie" style="display:none; margin-top: 15px;">
             <input type="text" id="i-antwoord" placeholder="Typ je gedachte..." onkeydown="if(event.key==='Enter')stuurAntwoord()">
-            <button class="btn-full" onclick="stuurAntwoord()" style="background: var(--purple); margin-top:15px;">Verstuur</button>
-        </div>
-        
-        <div class="no-print" style="margin-top: 30px; display: flex; flex-direction: column; gap: 8px;">
-            <button class="btn-full" onclick="volgendeStap()" style="background: var(--wall-bg);">Volgende stap ➔</button>
-            <button class="btn-full" onclick="resetSessie()" style="background: var(--red); font-size: 0.7rem; min-height: 35px;">Reset Vragen</button>
+            <button class="btn-full" onclick="stuurAntwoord()" style="background: var(--purple); margin-top:10px;">Verstuur</button>
         </div>
     </div>
 
+    <!-- PRIKBORD -->
     <div id="prikbord-sectie" style="display:none;">
         <h2 class="step-header">📍 Het Groeps-Prikbord</h2>
         <div class="output-container" id="prikbord-grid"></div>
     </div>
 
-    <div style="text-align: center; margin: 30px 0;">
-        <img src="de-schapen-van-aart-van-den-brandhof-hier-grazend-op-de-edese-heide.jpg" alt="Schapen op de Edese Heide" style="width:100%; border-radius:20px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));">
+    <!-- NAVIGATIE CONTROLS (ALTIJD ZICHTBAAR) -->
+    <div class="nav-controls no-print">
+        <button id="btn-volgende" class="btn-full" onclick="volgendeStap()" style="background: var(--wall-bg);">Volgende stap ➔</button>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-full btn-sec" onclick="vorigeStap()">⬅ Vorige</button>
+            <button class="btn-full btn-sec" onclick="resetSessie()" style="background: var(--red); color: white;">Reset Alles 🗑️</button>
+        </div>
     </div>
 
-    <h2 class="step-header">Terugblik</h2>
-    <div class="grid">
-        <div class="card"><label><b>1. Bijgebleven</b></label><input id="i-q1"><button class="btn-full" onclick="stuurOud(1,'q')" style="margin-top:8px">Drop het</button></div>
-        <div class="card"><label><b>2. Dankbaar</b></label><input id="i-q2"><button class="btn-full" onclick="stuurOud(2,'q')" style="margin-top:8px">Drop het</button></div>
+    <div style="text-align: center; margin: 40px 0;">
+        <img src="de-schapen-van-aart-van-den-brandhof-hier-grazend-op-de-edese-heide.jpg" alt="Schapen op de Edese Heide" style="width:100%; border-radius:20px;">
     </div>
 
-    <div class="output-container" id="out-q">
-        <div class="out-box" id="o-q1" style="min-height:120px"><span class="tag" style="background:var(--blue)">BIJGEBLEVEN</span></div>
-        <div class="out-box" id="o-q2" style="min-height:120px"><span class="tag" style="background:var(--green)">DANKBAAR</span></div>
-    </div>
-    
 </div>
 
 <script>
-    const firebaseConfig = { apiKey: "AIzaSyCSoSYmzdcse87_E-p6K-DMn_NbQWFnPNU", authDomain: "huddlebijdebie26jan.firebaseapp.com", databaseURL: "https://huddlebijdebie26jan-default-rtdb.europe-west1.firebasedatabase.app/", projectId: "huddlebijdebie26jan" };
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCSoSYmzdcse87_E-p6K-DMn_NbQWFnPNU", 
+        authDomain: "huddlebijdebie26jan.firebaseapp.com", 
+        databaseURL: "https://huddlebijdebie26jan-default-rtdb.europe-west1.firebasedatabase.app/", 
+        projectId: "huddlebijdebie26jan" 
+    };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
@@ -168,14 +144,31 @@
         const iSectie = document.getElementById('input-sectie');
         const prikbord = document.getElementById('prikbord-sectie');
         const blok = document.getElementById('interactief-blok');
+        const btnVolgende = document.getElementById('btn-volgende');
 
-        if (stap === 0) { vDisplay.innerText = "Klaar voor de start? ☕"; iSectie.style.display = 'none'; }
-        else if (stap <= 4) { vDisplay.innerText = diepeVragen[stap-1]; iSectie.style.display = 'block'; prikbord.style.display = 'none'; }
-        else { blok.style.display = 'none'; prikbord.style.display = 'block'; laadPrikbord(); }
+        if (stap === 0) {
+            blok.style.display = 'block';
+            vDisplay.innerText = "Klaar voor de start? ☕";
+            iSectie.style.display = 'none';
+            prikbord.style.display = 'none';
+            btnVolgende.innerText = "Start Vragen ➔";
+        } else if (stap <= 4) {
+            blok.style.display = 'block';
+            vDisplay.innerText = diepeVragen[stap-1];
+            iSectie.style.display = 'block';
+            prikbord.style.display = 'none';
+            btnVolgende.innerText = "Volgende Vraag ➔";
+        } else {
+            blok.style.display = 'none';
+            prikbord.style.display = 'block';
+            btnVolgende.innerText = "Prikbord is Live ✨";
+            laadPrikbord();
+        }
     });
 
     function volgendeStap() { db.ref('h/stap').transaction(c => (c || 0) + 1); }
-    function resetSessie() { if(confirm("Vragen resetten?")) { db.ref('h/antwoorden').remove(); db.ref('h/stap').set(0); } }
+    function vorigeStap() { db.ref('h/stap').transaction(c => Math.max(0, (c || 0) - 1)); }
+    function resetSessie() { if(confirm("Wil je alle antwoorden en de voortgang wissen?")) { db.ref('h/antwoorden').remove(); db.ref('h/stap').set(0); } }
 
     function stuurAntwoord() {
         const el = document.getElementById('i-antwoord');
@@ -184,6 +177,7 @@
             if(el.value.trim() && stap > 0) {
                 db.ref(`h/antwoorden/v${stap}`).push(el.value);
                 el.value = ""; el.placeholder = "Verstuurd! ✅";
+                setTimeout(() => { el.placeholder = "Typ je gedachte..."; }, 2000);
             }
         });
     }
@@ -191,7 +185,7 @@
     function laadPrikbord() {
         const grid = document.getElementById('prikbord-grid'); grid.innerHTML = "";
         const kleuren = ['#fab1a0', '#74b9ff', '#55efc4', '#ffeaa7'];
-        const labels = ["BINNENKAMER", "HARTSLAG", "NIET-PRESTEREN", "DE HERDER"];
+        const labels = ["BINNENKAMER", "HARTSLAG", "STILTE", "DE HERDER"];
         for(let i=1; i<=4; i++) {
             const box = document.createElement('div'); box.className = 'out-box';
             box.style.borderTop = `6px solid ${kleuren[i-1]}`;
@@ -206,28 +200,6 @@
             grid.appendChild(box);
         }
     }
-
-    function stuurOud(id, type) {
-        const el = document.getElementById('i-' + type + id);
-        if(el && el.value.trim()) { db.ref('h/' + type).push({ c: id, t: el.value }); el.value = ""; }
-    }
-
-    const listenOud = (p, pref, tags) => {
-        db.ref('h/'+p).on('value', s => {
-            const boxes = document.querySelectorAll(`[id^="o-${pref}"]`);
-            boxes.forEach((b, i) => { 
-                const tagEl = b.querySelector('.tag');
-                b.innerHTML = ""; 
-                if(tagEl) b.appendChild(tagEl);
-            });
-            if(s.exists()) s.forEach(c => {
-                const v = c.val(); const d = document.createElement('div'); d.className = 'entry';
-                d.innerText = v.t; const target = document.getElementById('o-' + pref + v.c);
-                if(target) target.appendChild(d);
-            });
-        });
-    };
-    listenOud('q', 'q', ["BIJGEBLEVEN","DANKBAAR"]);
 </script>
 </body>
 </html>
