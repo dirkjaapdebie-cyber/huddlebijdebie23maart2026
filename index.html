@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Huddle Dashboard - De Volledige Versie</title>
+    <title>Huddle Dashboard - De Heide Editie</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
@@ -22,7 +22,7 @@
 
         .container { max-width: 1100px; margin: auto; padding: 15px; box-sizing: border-box; }
 
-        .card, .out-box, .video-box, .info-box { 
+        .card, .out-box, .video-box { 
             background: rgba(255, 255, 255, 0.7); 
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             border-radius: 20px; padding: 20px; 
@@ -32,7 +32,7 @@
         }
 
         .bijbel-container { border-left: 8px solid var(--green); }
-        .scroll-box { max-height: 150px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .scroll-box { max-height: 150px; overflow-y: auto; }
         .scroll-box article { margin-bottom: 10px; background: white; padding: 12px; border-radius: 12px; }
 
         .btn-full { 
@@ -47,7 +47,7 @@
 
         input { 
             min-height: 48px; padding: 12px; border: 2px solid transparent; border-radius: 12px; 
-            font-size: 16px; width: 100%; box-sizing: border-box; background: white;
+            font-size: 16px; width: 100%; box-sizing: border-box; background: white; margin-bottom: 10px;
         }
 
         .sticky-note, .entry { 
@@ -65,8 +65,6 @@
             border-radius: 50px; font-size: 0.7rem; font-weight: bold;
             position: absolute; top: -12px; left: 15px; z-index: 2;
         }
-
-        .info-box { border-left: 8px solid var(--accent); font-size: 0.9rem; line-height: 1.4; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
 </head>
@@ -74,30 +72,29 @@
 
 <div class="container">
     
-    <!-- BIJBELTEKSTEN -->
+    <!-- TOP: BIJBEL & VIDEO -->
     <div class="card bijbel-container">
-        <h3 style="margin-top:0; color: var(--green);">✨ God ziet je wanneer je bidt</h3>
+        <h3 style="margin-top:0; color: var(--green);">✨ God ziet je</h3>
         <div class="scroll-box">
-            <article><strong>Mattheüs 6:6</strong><p>"Maar als u bidt, ga in uw binnenkamer, sluit uw deur en bid tot uw Vader..."</p></article>
+            <article><strong>Mattheüs 6:6</strong><p>"Maar als u bidt, ga in uw binnenkamer..."</p></article>
             <article><strong>Psalm 34:16</strong><p>"De ogen van de HEERE rusten op de rechtvaardigen..."</p></article>
             <article><strong>Psalm 139:2</strong><p>"Ú kent mijn zitten en mijn opstaan, Ú begrijpt van verre mijn gedachten."</p></article>
         </div>
     </div>
 
-    <!-- VIDEO -->
     <div class="video-box">
         <div id="player" style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:15px; background:#000;"></div>
     </div>
 
-    <!-- INTERACTIEF PRIKBORD SYSTEEM -->
+    <!-- INTERACTIEVE VRAGEN-REIS -->
     <div class="card" id="interactief-blok" style="border-top: 8px solid var(--purple); text-align: center;">
-        <h2 id="huidige-vraag" style="color: var(--purple); font-size: 1.2rem; min-height: 40px;">Wachten op de start... ☕</h2>
+        <h2 id="huidige-vraag" style="color: var(--purple); font-size: 1.2rem; min-height: 40px; padding: 0 10px;">Laden...</h2>
         <div id="input-sectie" style="display:none; margin-top: 15px;">
-            <input type="text" id="i-antwoord" placeholder="Deel je gedachte..." onkeydown="if(event.key==='Enter')stuurAntwoord()">
-            <button class="btn-full" onclick="stuurAntwoord()" style="background: var(--purple); margin-top:10px;">Verstuur naar Prikbord</button>
+            <input type="text" id="i-antwoord" placeholder="Typ je antwoord hier..." onkeydown="if(event.key==='Enter')stuurAntwoord()">
+            <button class="btn-full" onclick="stuurAntwoord()" style="background: var(--purple);">Verstuur naar Prikbord</button>
         </div>
         
-        <div class="no-print" style="margin-top: 25px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="margin-top: 25px; display: flex; flex-direction: column; gap: 8px;">
             <button id="btn-volgende" class="btn-full" onclick="volgendeStap()" style="background: var(--wall-bg);">Volgende stap ➔</button>
             <div style="display: flex; gap: 10px;">
                 <button class="btn-full btn-sec" onclick="vorigeStap()">⬅ Terug</button>
@@ -106,29 +103,25 @@
         </div>
     </div>
 
+    <!-- GROEPS-PRIKBORD (VERSCHIJNT BIJ STAP 5) -->
     <div id="prikbord-sectie" style="display:none;">
         <h2 class="step-header">📍 Het Groeps-Prikbord</h2>
         <div class="output-container" id="prikbord-grid"></div>
     </div>
 
     <div style="text-align: center; margin: 40px 0;">
-        <img src="de-schapen-van-aart-van-den-brandhof-hier-grazend-op-de-edese-heide.jpg" alt="Schapen op de Heide" style="width:100%; border-radius:20px;">
+        <img src="de-schapen-van-aart-van-den-brandhof-hier-grazend-op-de-edese-heide.jpg" alt="Schapen op de heide" style="width:100%; border-radius:20px;">
     </div>
 
     <hr style="border:0; border-top: 2px dashed #ccc; margin: 50px 0;">
 
-    <!-- STAP 1: TERUGBLIK (HERSTELD) -->
+    <!-- STAP 1 t/m 3: OORSPRONKELIJK DASHBOARD -->
     <h2 class="step-header">Stap 1: Terugblik</h2>
-    <div class="info-box">
-        <strong>Vragen voor de terugblik:</strong><br>
-        1. Wat is je bijgebleven? | 2. Waar ben je dankbaar voor?<br>
-        3. Waar zie je kansen? | 4. Jouw rol als kringleider?
-    </div>
     <div class="grid">
-        <div class="card"><label><b>1. Bijgebleven</b></label><input id="i-q1"><button class="btn-full" onclick="stuurOud(1,'q')">Verstuur</button></div>
-        <div class="card"><label><b>2. Dankbaar</b></label><input id="i-q2"><button class="btn-full" onclick="stuurOud(2,'q')">Verstuur</button></div>
-        <div class="card"><label><b>3. Kansen</b></label><input id="i-q3"><button class="btn-full" onclick="stuurOud(3,'q')">Verstuur</button></div>
-        <div class="card"><label><b>4. Kringleider</b></label><input id="i-q4"><button class="btn-full" onclick="stuurOud(4,'q')">Verstuur</button></div>
+        <div class="card"><label>1. Bijgebleven</label><input id="i-q1"><button class="btn-full" onclick="stuurOud(1,'q')">Drop it</button></div>
+        <div class="card"><label>2. Dankbaar</label><input id="i-q2"><button class="btn-full" onclick="stuurOud(2,'q')">Drop it</button></div>
+        <div class="card"><label>3. Kansen</label><input id="i-q3"><button class="btn-full" onclick="stuurOud(3,'q')">Drop it</button></div>
+        <div class="card"><label>4. Kringleider</label><input id="i-q4"><button class="btn-full" onclick="stuurOud(4,'q')">Drop it</button></div>
     </div>
     <div class="output-container">
         <div class="out-box" id="o-q1"><span class="tag" style="background:var(--blue)">BIJGEBLEVEN</span></div>
@@ -137,22 +130,20 @@
         <div class="out-box" id="o-q4"><span class="tag" style="background:var(--purple)">KRINGLEIDER</span></div>
     </div>
 
-    <!-- STAP 2 & 3: KERNWAARDEN & FOCUS (HERSTELD) -->
     <h2 class="step-header">Stap 2 & 3: Kernwaarden & Focus</h2>
     <div class="grid">
-        <div class="card" style="border-top:5px solid var(--green)"><label><b>Zichtbaar in buurt</b></label><input id="i-sG"><button class="btn-full" style="background:var(--green)" onclick="stuurOud('G','s')">Verstuur</button></div>
-        <div class="card" style="border-top:5px solid var(--red)"><label><b>Verlangen naar groei</b></label><input id="i-sR"><button class="btn-full" style="background:var(--red)" onclick="stuurOud('R','s')">Verstuur</button></div>
-        <div class="card" style="border-top:5px solid var(--yellow)"><label><b>Focus Kringhuis</b></label><input id="i-f1"><button class="btn-full" style="background:var(--yellow); color:#000" onclick="stuurOud(1,'f')">Toevoegen</button></div>
+        <div class="card"><label>Zichtbaar in buurt</label><input id="i-sG"><button class="btn-full" style="background:var(--green)" onclick="stuurOud('G','s')">Verstuur</button></div>
+        <div class="card"><label>Verlangen naar groei</label><input id="i-sR"><button class="btn-full" style="background:var(--red)" onclick="stuurOud('R','s')">Verstuur</button></div>
+        <div class="card"><label>Focus Kringhuis</label><input id="i-f1"><button class="btn-full" style="background:var(--yellow); color:#000" onclick="stuurOud(1,'f')">Plan actie</button></div>
     </div>
     <div class="output-container">
         <div class="out-box" id="o-sG"><span class="tag" style="background:var(--green)">ZICHTBAAR</span></div>
         <div class="out-box" id="o-sR"><span class="tag" style="background:var(--red)">VERLANGEN</span></div>
-        <div class="out-box" id="o-f1" style="grid-column: span 1;"><span class="tag" style="background:var(--yellow); color:#000">ONZE FOCUS</span></div>
+        <div class="out-box" id="o-f1"><span class="tag" style="background:var(--yellow); color:#000">FOCUS</span></div>
     </div>
 
-    <!-- RESET ALLES KNOP -->
-    <div style="margin-top: 60px; text-align: center; padding-bottom: 40px;">
-        <button class="btn-full btn-red" onclick="resetAlles()" style="width: auto; padding: 15px 40px; margin: auto;">⚠️ WIS HELE BIJEENKOMST (INCL. DATABASE)</button>
+    <div style="margin: 60px 0; text-align: center;">
+        <button class="btn-full btn-red" onclick="resetAlles()" style="width: auto; padding: 15px 40px; margin: auto;">⚠️ RESET HELE DASHBOARD</button>
     </div>
 
 </div>
@@ -167,38 +158,43 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // DE VRAGEN DIE JE TERUG WILDE:
     const diepeVragen = [
-        "1. Als God je ziet op momenten dat niemand anders kijkt, verandert dat hoe je bidt?",
-        "2. Hoe verandert het jouw rust als je beseft dat God simpelweg kijkt naar wie je bént?",
+        "1. God ziet jou altijd, wat maakt het dan uit hoe je bidt?",
+        "2. God kijkt simpelweg naar wie je bént. Wat doet dat met jou?",
         "3. Kun jij geloven dat God met plezier naar je kijkt als je alleen maar stil bij Hem bent?",
-        "4. Wanneer heb jij voor het laatst ervaren dat God heel specifiek jóuw situatie zag?"
+        "4. Wanneer heb jij voor het laatst ervaren dat God heel specifiek jóuw gebed verhoorde? Of het gebed van een vriend of vriendin of ..."
     ];
 
     document.getElementById('player').innerHTML = `<iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" src="https://www.youtube.com/embed/cq6quKlwQy8?start=1479" allowfullscreen></iframe>`;
 
-    // --- PRIKBORD LOGICA ---
+    // --- REIS LOGICA ---
     db.ref('h/stap').on('value', s => {
         const stap = s.val() || 0;
         const vDisplay = document.getElementById('huidige-vraag');
         const iSectie = document.getElementById('input-sectie');
         const prikbord = document.getElementById('prikbord-sectie');
         const blok = document.getElementById('interactief-blok');
+        const btnV = document.getElementById('btn-volgende');
 
         if (stap === 0) {
-            blok.style.display = 'block'; vDisplay.innerText = "Klaar voor de start? ☕";
-            iSectie.style.display = 'none'; prikbord.style.display = 'none';
+            vDisplay.innerText = "Klaar voor de start? ☕";
+            iSectie.style.display = 'none'; prikbord.style.display = 'none'; blok.style.display = 'block';
+            btnV.innerText = "Start Vragen ➔";
         } else if (stap <= 4) {
-            blok.style.display = 'block'; vDisplay.innerText = diepeVragen[stap-1];
-            iSectie.style.display = 'block'; prikbord.style.display = 'none';
+            vDisplay.innerText = diepeVragen[stap-1];
+            iSectie.style.display = 'block'; prikbord.style.display = 'none'; blok.style.display = 'block';
+            btnV.innerText = "Volgende Vraag ➔";
         } else {
-            blok.style.display = 'none'; prikbord.style.display = 'block';
+            vDisplay.innerText = "Samen op de heide... ✨";
+            iSectie.style.display = 'none'; prikbord.style.display = 'block'; blok.style.display = 'none';
             laadPrikbord();
         }
     });
 
     function volgendeStap() { db.ref('h/stap').transaction(c => (c || 0) + 1); }
     function vorigeStap() { db.ref('h/stap').transaction(c => Math.max(0, (c || 0) - 1)); }
-    function resetPrikbord() { if(confirm("Alleen het prikbord wissen?")) { db.ref('h/antwoorden').remove(); db.ref('h/stap').set(0); } }
+    function resetPrikbord() { if(confirm("Alleen prikbord wissen?")) { db.ref('h/antwoorden').remove(); db.ref('h/stap').set(0); } }
     function resetAlles() { if(confirm("DIT WIST ALLES! Weet je het zeker?")) { db.ref('h').remove().then(() => location.reload()); } }
 
     function stuurAntwoord() {
@@ -207,7 +203,8 @@
             const stap = s.val();
             if(el.value.trim() && stap > 0) {
                 db.ref(`h/antwoorden/v${stap}`).push(el.value);
-                el.value = ""; el.placeholder = "Gelukt! ✅";
+                el.value = ""; el.placeholder = "Gedachte geplaatst! ✅";
+                setTimeout(() => { el.placeholder = "Typ je antwoord hier..."; }, 2000);
             }
         });
     }
@@ -231,33 +228,25 @@
         }
     }
 
-    // --- OORSPRONKELIJKE DASHBOARD LOGICA (STAP 1,2,3) ---
+    // --- DASHBOARD LOGICA (STAP 1, 2, 3) ---
     function stuurOud(id, type) {
         const el = document.getElementById('i-' + type + id);
         if(el && el.value.trim()) { db.ref('h/' + type).push({ c: id, t: el.value }); el.value = ""; }
     }
 
-    const listenOud = (path, prefix, tags) => {
-        db.ref('h/'+path).on('value', snap => {
-            const boxes = document.querySelectorAll(`[id^="o-${prefix}"]`);
-            boxes.forEach((b, i) => { 
-                const tagEl = b.querySelector('.tag'); 
-                b.innerHTML = ""; if(tagEl) b.appendChild(tagEl);
+    function listenOud(p, pref) {
+        db.ref('h/'+p).on('value', s => {
+            document.querySelectorAll(`[id^="o-${pref}"]`).forEach(b => {
+                const tag = b.querySelector('.tag'); b.innerHTML = ""; if(tag) b.appendChild(tag);
             });
-            if(snap.exists()) snap.forEach(child => {
-                const val = child.val();
-                const d = document.createElement('div'); d.className = 'entry';
-                d.innerText = val.t;
-                const target = document.getElementById('o-' + prefix + val.c);
+            if(s.exists()) s.forEach(c => {
+                const v = c.val(); const d = document.createElement('div'); d.className = 'entry';
+                d.innerText = v.t; const target = document.getElementById('o-' + pref + v.c);
                 if(target) target.appendChild(d);
             });
         });
-    };
-    
-    // Luister naar alle secties
-    listenOud('q', 'q', ["BIJGEBLEVEN","DANKBAAR","KANSEN","KRINGLEIDER"]);
-    listenOud('s', 's', ["ZICHTBAAR", "VERLANGEN"]);
-    listenOud('f', 'f', ["FOCUS"]);
+    }
+    listenOud('q', 'q'); listenOud('s', 's'); listenOud('f', 'f');
 </script>
 </body>
 </html>
