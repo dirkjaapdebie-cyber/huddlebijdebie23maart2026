@@ -2,9 +2,8 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <!-- CRUCIAAL VOOR MOBIEL: Voorkomt ongewenst zoomen en zet de breedte goed -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Huddle Dashboard - Mobile & Touch Friendly</title>
+    <title>Huddle Dashboard - Schapen op de Heide</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
@@ -19,7 +18,7 @@
             margin: 0; font-family: 'Quicksand', 'Segoe UI', sans-serif; 
             background: linear-gradient(135deg, #fff9e6 0%, #e0f2f1 50%, #f3e5f5 100%);
             background-attachment: fixed; padding-bottom: 50px; color: #2d3436;
-            -webkit-tap-highlight-color: transparent; /* Verwijdert blauwe gloed bij tikken op mobiel */
+            -webkit-tap-highlight-color: transparent;
         }
 
         .container { max-width: 1100px; margin: auto; padding: 15px; box-sizing: border-box; }
@@ -37,24 +36,26 @@
         .bijbel-container { border-left: 8px solid var(--green); }
         .scroll-box { 
             max-height: 160px; overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; /* Zorgt voor "smooth bounce" op iPhone */
+            -webkit-overflow-scrolling: touch; 
             padding-right: 5px; 
         }
         .scroll-box article { margin-bottom: 10px; background: white; padding: 12px; border-radius: 12px; font-size: 0.95rem; }
 
         /* Knoppen: Groter voor duimen */
         .btn-full { 
-            min-height: 48px; /* Touch-standard */
+            min-height: 48px;
             background: var(--accent); color: white; border: none; padding: 10px 20px;
             border-radius: 15px; cursor: pointer; font-weight: 700; width: 100%;
             text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px;
             display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s ease;
         }
+        .btn-full:active { transform: scale(0.98); filter: brightness(0.9); }
 
-        /* Inputs: Voorkom iOS zoom (font-size moet 16px zijn) */
+        /* Inputs: Voorkom iOS zoom */
         input { 
             min-height: 48px; padding: 12px; border: 2px solid transparent; border-radius: 12px; 
-            font-size: 16px; /* Magisch getal tegen inzoomen op iPhone */
+            font-size: 16px; 
             width: 100%; box-sizing: border-box; background: white;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
@@ -70,14 +71,14 @@
 
         .step-header { text-align: center; margin: 40px 0 20px; font-size: 1.5rem; color: var(--wall-bg); }
         
-        /* Grids die zich aanpassen aan schermgrootte */
+        /* Grids die zich aanpassen */
         .grid, .output-container { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
             gap: 15px; 
         }
 
-        /* Op hele kleine schermen (iPhone SE enz) */
+        /* Op hele kleine schermen */
         @media (max-width: 400px) {
             .grid, .output-container { grid-template-columns: 1fr; }
             .card { padding: 15px; }
@@ -98,7 +99,6 @@
 
 <div class="container">
     
-    <!-- BIJBELTEKSTEN -->
     <div class="card bijbel-container">
         <h3 style="margin-top:0; color: var(--green); font-size: 1.1rem;">✨ God ziet je wanneer je bidt</h3>
         <div class="scroll-box">
@@ -109,12 +109,10 @@
         </div>
     </div>
 
-    <!-- VIDEO -->
     <div class="video-box">
         <div id="player" style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:15px; background:#000;"></div>
     </div>
 
-    <!-- INTERACTIEVE VRAGEN -->
     <div class="card" id="interactief-blok" style="border-top: 8px solid var(--purple); text-align: center;">
         <h2 id="huidige-vraag" style="color: var(--purple); font-size: 1.2rem; min-height: 50px;">Wachten op de start... ☕</h2>
         <div id="input-sectie" style="display:none; margin-top: 15px;">
@@ -128,15 +126,15 @@
         </div>
     </div>
 
-    <!-- PRIKBORD -->
     <div id="prikbord-sectie" style="display:none;">
         <h2 class="step-header">📍 Het Groeps-Prikbord</h2>
         <div class="output-container" id="prikbord-grid"></div>
     </div>
 
-    <div style="text-align: center; margin: 30px 0;"><img src="Goede Herder2.jpg" alt="Goede Herder" style="width:100%; border-radius:20px;"></div>
+    <div style="text-align: center; margin: 30px 0;">
+        <img src="de-schapen-van-aart-van-den-brandhof-hier-grazend-op-de-edese-heide.jpg" alt="Schapen op de Edese Heide" style="width:100%; border-radius:20px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));">
+    </div>
 
-    <!-- OUDE DASHBOARD CONTENT (NU RESPONSIVE) -->
     <h2 class="step-header">Terugblik</h2>
     <div class="grid">
         <div class="card"><label><b>1. Bijgebleven</b></label><input id="i-q1"><button class="btn-full" onclick="stuurOud(1,'q')" style="margin-top:8px">Drop het</button></div>
@@ -148,15 +146,9 @@
         <div class="out-box" id="o-q2" style="min-height:120px"><span class="tag" style="background:var(--green)">DANKBAAR</span></div>
     </div>
     
-    <!-- Knop voor PDF of extra's kan hier -->
-
 </div>
 
 <script>
-    // Gebruik je bestaande Firebase Config en Functies hier...
-    // De rest van de JS blijft hetzelfde als de vorige versie!
-    // Alleen de laadPrikbord functie moet aangepast worden voor de mobiele styling:
-
     const firebaseConfig = { apiKey: "AIzaSyCSoSYmzdcse87_E-p6K-DMn_NbQWFnPNU", authDomain: "huddlebijdebie26jan.firebaseapp.com", databaseURL: "https://huddlebijdebie26jan-default-rtdb.europe-west1.firebasedatabase.app/", projectId: "huddlebijdebie26jan" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
